@@ -2,6 +2,8 @@
 
 There's currently no ref name validation which can cause some interesting problems.
 
+TL;DR: [`bug_demo.go`](./bug_demo.go)
+
 ## Background
 
 `git` has a few naming stipulations. I didn't actually realize how detailed they were until I starting messing around with this earlier today.
@@ -27,7 +29,13 @@ These are the files I copypasta'd together for the bug demo.
 
 ## The Demo
 
-tbh I think I lucked into one of the more fun edge cases
+tbh I think I lucked into one of the more fun edge cases. The setup is fairly straight forward. I'm going to describe what I'm doing in terms of `git` commands but I'm actually using `go-git`.
+
+1. I create a repo using `git init` (or open an existing one but I don't recommend that; you will lose files).
+
+## Benchmarks
+
+I spent a ton of time playing around with benchmarks. I'd love to about how to improve them! I tried to add a fair amount of randomness to the process.
 
 ## Asciicast
 
