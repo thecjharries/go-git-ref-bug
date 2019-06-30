@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 )
@@ -26,7 +27,9 @@ var (
 		`(.(lock)?|/)$`,
 		`/(\.|/)`,
 		`^[^/]+$`,
-		`([\000-\037\177 ~^:?*[\\]+|\.\.|@\{)`,
+		`[\000-\037\177 ~^:?*[]+`,
+		`\.\.`,
+		`@\{`,
 	}
 	StringsToTest = []string{
 		`not/.allowed`,
@@ -40,6 +43,8 @@ var (
 		`has/con@{trol/chars`,
 		`has/a\.bad/setup`,
 		`@`,
+		`path/with/~.ssh/tilde`,
+		`i/forgot/my?path`,
 	}
 )
 
@@ -56,6 +61,7 @@ func BuildListOfPatterns(raw_list_of_patterns []string) []*regexp.Regexp {
 }
 
 func MatchAgainstSinglePattern(single_pattern *regexp.Regexp, string_to_test string) bool {
+	fmt.Println(single_pattern.String(), string_to_test)
 	return single_pattern.MatchString(string_to_test)
 }
 
