@@ -43,6 +43,14 @@ tbh I think I lucked into one of the more fun edge cases. The setup is fairly st
 
 There were some very interesting side effects that popped up, including losting files in the active directory. [The first version](https://github.com/thecjharries/go-git-ref-bug/blob/597d844f89a60ce7e23cc92dc746f35eabfa9411/bug_demo.go) is worth poking around at. Aside from quirks, suppose your automation pipeline injects some garbage to the ref name overnight and completely mucks up `git` processes?
 
+## Solution
+
+### Discovering the Affected Code
+
+Because this is a huge project, fixing this has to be done surgically with as few changes to the underlying API as possible. That's rough. The best place to start is with `ReferenceName`, the `type` that runs this. AFAIK I can tell, given its widespread use _as_ as a function (e.g. `plumbing.ReferenceName("my-ref")`), the best way to handle it would be to convert it from a `string` to a `func(string) string`.
+
+I spent a lot of time on this trying to track down the problem. I also spent a lot of time attempting to fix it in place, which didn't work out as well as I would have liked. I'll be submitting a PR for this ASAP.
+
 ## Benchmarks
 
 I spent a ton of time playing around with benchmarks. I'd love to about how to improve them! I tried to add a fair amount of randomness to the process.
