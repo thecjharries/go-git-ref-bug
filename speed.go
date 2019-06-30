@@ -1,6 +1,10 @@
 package main
 
-import "regexp"
+import (
+	"fmt"
+	"log"
+	"regexp"
+)
 
 var (
 	RawPatternsAsOne  = `^.*?/\..*?$|^.*?\.(lock)?$|^[^/]+$|^.*?\.\..*?$|^.*?[\000-\037\177 ~^:?*[]+.*?$|^\..*?$|^.*?/$|^.*?//.*?$|^.*?@\{.*?$|^@$|^.*?\\.*?$`
@@ -17,13 +21,13 @@ var (
 		`^.*?\\.*?$`,
 		`^[^/]+$`,
 	}
-	RawTunedPatternsAsOne  = `^(@|\.)|(.(lock)?|/)$|/(\.|/)|^[^/]+$|([\000-\037\177 ~^:?*[\]+|\.\.|@\{)`
+	RawTunedPatternsAsOne  = `^(@|\.)|(.(lock)?|/)$|/(\.|/)|^[^/]+$|([\000-\037\177 ~^:?*\\[]+|\.\.|@\{)`
 	RawTunedPatternsAsList = []string{
 		`^(@|\.)`,
 		`(.(lock)?|/)$`,
 		`/(\.|/)`,
 		`^[^/]+$`,
-		`([\000-\037\177 ~^:?*[\]+|\.\.|@\{)`,
+		`([\000-\037\177 ~^:?*[\\]+|\.\.|@\{)`,
 	}
 	StringsToTest = []string{
 		`not/.allowed`,
@@ -40,13 +44,13 @@ var (
 	}
 )
 
-func BuildSingleRegexPattern(single_pattern *regexp.Regexp) *regexp.Regexp {
-	return regexp.MustCompile(single_pattern)
+func BuildSingleRegexPattern(raw_single_pattern string) *regexp.Regexp {
+	return regexp.MustCompile(raw_single_pattern)
 }
 
-func BuildListOfPatterns(list_of_patterns []*regexp.Regexp) []*regexp.Regexp {
+func BuildListOfPatterns(raw_list_of_patterns []string) []*regexp.Regexp {
 	patterns := make([]*regexp.Regexp, len(RawPatternsAsList))
-	for index, pattern := range list_of_patterns {
+	for index, pattern := range raw_list_of_patterns {
 		patterns[index] = regexp.MustCompile(pattern)
 	}
 	return patterns
@@ -63,4 +67,32 @@ func MatchAgainstListOfPatterns(list_of_patterns []*regexp.Regexp, string_to_tes
 		}
 	}
 	return true
+}
+
+func CompileAndMatchAllStringsSinglePattern(raw_single_pattern string, strings_to_test []string) {
+	compiled_pattern := BuildSingleRegexPattern(raw_single_pattern)
+	success := true
+	fmt.Println("inner")
+	for _, untested_string := range strings_to_test {
+		if !MatchAgainstSinglePattern(compiled_pattern, untested_string) {
+			log.Fatal(untested_string)
+			success = false
+		}
+	}
+	return success
+}
+
+func CompileAndMatchAllStringsListPattern(raw_list_of_patterns []string, strings_to_test []string) {
+	compiled_patterns := BuildListOfPatterns(raw_list_of_patterns)
+	success := true
+	for _, untested_string := range strings_to_test {
+		if !MatchAgainstListOfPatterns(compiled_patterns, untested_string) {
+			success = false
+		}
+	}
+	return success
+}
+
+func main() {
+	CompileAndMatchAllStringsSinglePattern(RawPatternsAsOne, StringsToTest)
 }

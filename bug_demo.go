@@ -86,6 +86,6 @@ func RunProcess() {
 	CreateNewBranch(r, "new-..bad\\.branch//name.")
 }
 
-func main() {
-	// RunProcess()
-}
+// func main() {
+// 	// RunProcess()
+// }
