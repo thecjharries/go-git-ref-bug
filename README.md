@@ -12,9 +12,22 @@ There's currently no ref name validation which can cause some interesting proble
 
 ## `go-git`
 
+### Main Files
 https://github.com/src-d/go-git/blob/master/plumbing/reference.go
 https://github.com/src-d/go-git/blob/master/references.go
 https://github.com/src-d/go-git/blob/master/config/refspec.go
+
+### Useful Examples
+
+These are the files I copypasta'd together for the bug demo.
+* https://github.com/src-d/go-git/blob/master/_examples/branch/main.go
+* https://github.com/src-d/go-git/blob/master/_examples/checkout/main.go
+* https://github.com/src-d/go-git/blob/master/_examples/commit/main.go
+* https://github.com/src-d/go-git/blob/master/_examples/revision/main.go
+
+## The Demo
+
+tbh I think I lucked into one of the more fun edge cases
 
 ## Asciicast
 
