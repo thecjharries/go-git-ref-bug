@@ -32,7 +32,7 @@ func BenchmarkMatchAgainstSinglePattern(b *testing.B) {
 func BenchmarkMatchAgainstListOfPatterns(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		MatchAgainstListOfPatterns(
-			CompiledSinglePattern,
+			CompiledListPattern,
 			StringsToTest[n%NumberOfStringsToTest],
 		)
 	}

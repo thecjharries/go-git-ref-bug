@@ -3,19 +3,27 @@ package main
 import "regexp"
 
 var (
-	RawPatternsAsOne  = `(?m)^.*?/\..*?$|^.*?\.(lock)?$|^[^/]+$|^.*?\.\..*?$|^.*?[\000-\037\177 ~^:?*[]+.*?$|^\..*?$|^.*?/$|^.*?//.*?$|^.*?@\{.*?$|^@$|^.*?\\.*?$`
+	RawPatternsAsOne  = `^.*?/\..*?$|^.*?\.(lock)?$|^[^/]+$|^.*?\.\..*?$|^.*?[\000-\037\177 ~^:?*[]+.*?$|^\..*?$|^.*?/$|^.*?//.*?$|^.*?@\{.*?$|^@$|^.*?\\.*?$`
 	RawPatternsAsList = []string{
-		`(?m)^.*?/\..*?$`,
+		`^@$`,
+		`^\..*?$`,
 		`^.*?\.(lock)?$`,
-		`^[^/]+$`,
+		`^.*?/$`,
+		`^.*?/\..*?$`,
 		`^.*?\.\..*?$`,
 		`^.*?[\000-\037\177 ~^:?*[]+.*?$`,
-		`^\..*?$`,
-		`^.*?/$`,
 		`^.*?//.*?$`,
 		`^.*?@\{.*?$`,
-		`^@$`,
 		`^.*?\\.*?$`,
+		`^[^/]+$`,
+	}
+	RawTunedPatternsAsOne  = `^(@|\.)|(.(lock)?|/)$|/(\.|/)|^[^/]+$|([\000-\037\177 ~^:?*[\]+|\.\.|@\{)`
+	RawTunedPatternsAsList = []string{
+		`^(@|\.)`,
+		`(.(lock)?|/)$`,
+		`/(\.|/)`,
+		`^[^/]+$`,
+		`([\000-\037\177 ~^:?*[\]+|\.\.|@\{)`,
 	}
 	StringsToTest = []string{
 		`not/.allowed`,
@@ -32,13 +40,13 @@ var (
 	}
 )
 
-func BuildSingleRegexPattern() *regexp.Regexp {
-	return regexp.MustCompile(RawPatternsAsOne)
+func BuildSingleRegexPattern(single_pattern *regexp.Regexp) *regexp.Regexp {
+	return regexp.MustCompile(single_pattern)
 }
 
-func BuildListOfPatterns() []*regexp.Regexp {
+func BuildListOfPatterns(list_of_patterns []*regexp.Regexp) []*regexp.Regexp {
 	patterns := make([]*regexp.Regexp, len(RawPatternsAsList))
-	for index, pattern := range RawPatternsAsList {
+	for index, pattern := range list_of_patterns {
 		patterns[index] = regexp.MustCompile(pattern)
 	}
 	return patterns
@@ -51,7 +59,7 @@ func MatchAgainstSinglePattern(single_pattern *regexp.Regexp, string_to_test str
 func MatchAgainstListOfPatterns(list_of_patterns []*regexp.Regexp, string_to_test string) bool {
 	for _, single_pattern := range list_of_patterns {
 		if !MatchAgainstSinglePattern(single_pattern, string_to_test) {
-			return False
+			return false
 		}
 	}
 	return true
