@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"regexp"
 )
@@ -69,10 +68,9 @@ func MatchAgainstListOfPatterns(list_of_patterns []*regexp.Regexp, string_to_tes
 	return true
 }
 
-func CompileAndMatchAllStringsSinglePattern(raw_single_pattern string, strings_to_test []string) {
+func CompileAndMatchAllStringsSinglePattern(raw_single_pattern string, strings_to_test []string) bool {
 	compiled_pattern := BuildSingleRegexPattern(raw_single_pattern)
 	success := true
-	fmt.Println("inner")
 	for _, untested_string := range strings_to_test {
 		if !MatchAgainstSinglePattern(compiled_pattern, untested_string) {
 			log.Fatal(untested_string)
@@ -82,7 +80,7 @@ func CompileAndMatchAllStringsSinglePattern(raw_single_pattern string, strings_t
 	return success
 }
 
-func CompileAndMatchAllStringsListPattern(raw_list_of_patterns []string, strings_to_test []string) {
+func CompileAndMatchAllStringsListPattern(raw_list_of_patterns []string, strings_to_test []string) bool {
 	compiled_patterns := BuildListOfPatterns(raw_list_of_patterns)
 	success := true
 	for _, untested_string := range strings_to_test {
@@ -91,8 +89,4 @@ func CompileAndMatchAllStringsListPattern(raw_list_of_patterns []string, strings
 		}
 	}
 	return success
-}
-
-func main() {
-	CompileAndMatchAllStringsSinglePattern(RawPatternsAsOne, StringsToTest)
 }
