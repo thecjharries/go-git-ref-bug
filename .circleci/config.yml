@@ -1,0 +1,22 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.12
+    working_directory: /go/src/github.com/thecjharries/go-git-ref-bug
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - go-git-ref-bug
+
+      - run: go get gopkg.in/check.v1
+      - run: go get gopkg.in/src-d/go-git.v4
+
+      - run: go test
+      - run: go test -bench=.
+
+      - save_cache:
+          keys: go-git-ref-bug
