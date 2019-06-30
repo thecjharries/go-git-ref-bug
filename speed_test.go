@@ -1,94 +1,11 @@
 package main
 
-import "testing"
-
-var (
-	CompiledSlowSinglePattern  = BuildSingleRegexPattern(RawPatternsAsOne)
-	CompiledSlowListPattern    = BuildListOfPatterns(RawPatternsAsList)
-	CompiledTunedSinglePattern = BuildSingleRegexPattern(RawTunedPatternsAsOne)
-	CompiledTunedListPattern   = BuildListOfPatterns(RawTunedPatternsAsList)
-	NumberOfStringsToTest      = len(StringsToTest)
+import (
+	"regexp"
+	"testing"
 )
 
-func BenchmarkBuildSingleSlowRegexPattern(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		BuildSingleRegexPattern(RawPatternsAsOne)
-	}
-}
+func singlePatternSuccesses(single_pattern *regexp.Regexp, strings_to_test []string, t *testing.T) {
+	result := MatchAgainstSinglePattern(single_pattern, string_to_test)
 
-func BenchmarkBuildSlowListOfPatterns(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		BuildListOfPatterns(RawPatternsAsList)
-	}
-}
-func BenchmarkBuildSingleTunedRegexPattern(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		BuildSingleRegexPattern(RawTunedPatternsAsOne)
-	}
-}
-
-func BenchmarkBuildTunedListOfPatterns(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		BuildListOfPatterns(RawTunedPatternsAsList)
-	}
-}
-
-func BenchmarkMatchAgainstSlowSinglePattern(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		MatchAgainstSinglePattern(
-			CompiledSlowSinglePattern,
-			StringsToTest[n%NumberOfStringsToTest],
-		)
-	}
-}
-
-func BenchmarkMatchAgainstSlowListOfPatterns(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		MatchAgainstListOfPatterns(
-			CompiledTunedListPattern,
-			StringsToTest[n%NumberOfStringsToTest],
-		)
-	}
-}
-
-func BenchmarkMatchAgainstTunedSinglePattern(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		MatchAgainstSinglePattern(
-			CompiledSlowSinglePattern,
-			StringsToTest[n%NumberOfStringsToTest],
-		)
-	}
-}
-
-func BenchmarkMatchAgainstTunedListOfPatterns(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		MatchAgainstListOfPatterns(
-			CompiledTunedListPattern,
-			StringsToTest[n%NumberOfStringsToTest],
-		)
-	}
-}
-
-func BenchmarkTheWholeProcessMatchAgainstSlowSinglePattern(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		CompileAndMatchAllStringsSinglePattern(RawPatternsAsOne, StringsToTest)
-	}
-}
-
-func BenchmarkTheWholeProcessMatchAgainstSlowListOfPatterns(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		CompileAndMatchAllStringsListPattern(RawPatternsAsList, StringsToTest)
-	}
-}
-
-func BenchmarkTheWholeProcessMatchAgainstTunedSinglePattern(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		CompileAndMatchAllStringsSinglePattern(RawTunedPatternsAsOne, StringsToTest)
-	}
-}
-
-func BenchmarkTheWholeProcessMatchAgainstTunedListOfPatterns(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		CompileAndMatchAllStringsListPattern(RawTunedPatternsAsList, StringsToTest)
-	}
 }
