@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"regexp"
 )
 
@@ -23,13 +21,13 @@ var (
 	}
 	RawTunedPatternsAsOne  = `^(@|\.)|(.(lock)?|/)$|/(\.|/)|^[^/]+$|([\000-\037\177 ~^:?*\\[]+|\.\.|@\{)`
 	RawTunedPatternsAsList = []string{
+		`@{`,
 		`^(@|\.)`,
 		`(.(lock)?|/)$`,
 		`/(\.|/)`,
 		`^[^/]+$`,
 		`[\000-\037\177 ~^:?*[]+`,
 		`\.\.`,
-		`@\{`,
 	}
 	StringsToTest = []string{
 		`not/.allowed`,
@@ -43,26 +41,25 @@ var (
 		`has/con@{trol/chars`,
 		`has/a\.bad/setup`,
 		`@`,
-		`path/with/~.ssh/tilde`,
-		`i/forgot/my?path`,
+		"\a",
 	}
 )
 
 func BuildSingleRegexPattern(raw_single_pattern string) *regexp.Regexp {
-	return regexp.MustCompile(raw_single_pattern)
+	return regexp.MustCompilePOSIX(raw_single_pattern)
 }
 
 func BuildListOfPatterns(raw_list_of_patterns []string) []*regexp.Regexp {
 	patterns := make([]*regexp.Regexp, len(RawPatternsAsList))
 	for index, pattern := range raw_list_of_patterns {
-		patterns[index] = regexp.MustCompile(pattern)
+		patterns[index] = regexp.MustCompilePOSIX(pattern)
 	}
 	return patterns
 }
 
 func MatchAgainstSinglePattern(single_pattern *regexp.Regexp, string_to_test string) bool {
-	fmt.Println(single_pattern.String(), string_to_test)
-	return single_pattern.MatchString(string_to_test)
+	result := single_pattern.Match([]byte(string_to_test))
+	return result
 }
 
 func MatchAgainstListOfPatterns(list_of_patterns []*regexp.Regexp, string_to_test string) bool {
@@ -79,7 +76,6 @@ func CompileAndMatchAllStringsSinglePattern(raw_single_pattern string, strings_t
 	success := true
 	for _, untested_string := range strings_to_test {
 		if !MatchAgainstSinglePattern(compiled_pattern, untested_string) {
-			log.Fatal(untested_string)
 			success = false
 		}
 	}
