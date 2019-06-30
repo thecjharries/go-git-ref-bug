@@ -10,6 +10,7 @@ import (
 
 	"gopkg.in/src-d/go-git.v4"
 	. "gopkg.in/src-d/go-git.v4/_examples"
+	"gopkg.in/src-d/go-git.v4/config"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
@@ -62,15 +63,18 @@ func CreateNewBranch(repo *git.Repository, branch_name string) {
 		new_ref.Name().String(),
 		IsRefNameValid(new_ref.Name().String()),
 	)
-	err = repo.Storer.SetReference(new_ref)
-	CheckIfError(err)
-	err = repo.Storer.SetConfig(repo_config)
-	CheckIfError(err)
+
 	w, err := repo.Worktree()
 	CheckIfError(err)
 	err = w.Checkout(&git.CheckoutOptions{
 		Branch: new_ref.Name(),
+		Keep:   true,
+		Create: true,
 	})
+	CheckIfError(err)
+	err = repo.Storer.SetReference(new_ref)
+	CheckIfError(err)
+	err = repo.Storer.SetConfig(repo_config)
 	CheckIfError(err)
 	MakeACommit(repo, w.Filesystem.Root(), branch_name)
 }
@@ -83,9 +87,17 @@ func RunProcess() {
 	}
 	CheckIfError(err)
 	MakeACommit(r, directory, "master")
+	_, err = r.CreateRemote(&config.RemoteConfig{
+		Name: "example",
+		URLs: []string{"https://github.com/git-fixtures/basic.git"},
+	})
+	CreateNewBranch(r, "test1")
+	CreateNewBranch(r, "test2")
+	CreateNewBranch(r, "test3")
+	CreateNewBranch(r, "test4")
 	CreateNewBranch(r, "new-..bad\\.branch//name.")
 }
 
-// func main() {
-// 	// RunProcess()
-// }
+func main() {
+	RunProcess()
+}
